@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プロセカ ツイ募テンプレビルダー</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Interフォントの読み込みはカスタムCSSへ移動 */
+        /* インラインCSSはstyle.cssに記述済みですが、一部残します */
+        .tab-active { 
+            /* style.cssに移動 */
+            border-b-2 border-indigo-500;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loadingOverlay" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="p-4 bg-white rounded-xl shadow-2xl flex items-center">
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 
+0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="text-gray-700">テンプレートデータをロード中...</p>
+        </div>
+    </div>
+
+    <div class="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
+        <div class="bg-white p-6 rounded-xl shadow-2xl border border-gray-100">
+
+            <h1 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-2">
+                プロセカ ツイ募テンプレ ビルダー　Ver.1.02
+            </h1>
+            <div class="grid grid-cols-1 gap-6">
+
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">①パラメータ入力</h2>
+
+                    <div class="mb-4 input-group bg-blue-50 p-3 rounded-lg border border-blue-200">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="veteranCheck" class="form-checkbox h-5 w-5 text-indigo-600" checked>
+                            <label for="veteranCheck" class="ml-3 text-base font-medium text-blue-800">「ベテラン」を先頭に挿入</label>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">※ チェックが入るとツイートの一番はじめに「ベテラン」が入ります。</p>
+                    </div>
+
+                    <div class="mb-4 input-group p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">周回期間 (任意)</label>
+                        <div class="score-radio-group mb-2">
+                            <input type="radio" id="countType_count" name="countType" value="count" class="hidden" checked>
+                            <label for="countType_count">回数で募集</label>
+                            <input type="radio" id="countType_time" name="countType" value="time" class="hidden">
+                            <label for="countType_time">時間で募集</label>
+                        </div>
+                        <input 
+                        type="number" id="countInput" placeholder="回数 (例: 3)" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 mt-1 count-field" 
+                        style="display: block;">
+                        <input type="text" id="timeInput" placeholder="時間 (例: 23:30まで)" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 mt-1 count-field" 
+                            style="display: none;">
+                    </div>
+
+                    <div class="mb-4 input-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">周回の種類<span class="text-xs text-red-500">（自動で【周回】が語尾に付きます）</span></label>
+                        <select id="loopTypeSelect" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white mb-2">
+                            <option value="" selected>プリセットを選択</option>
+                            <option value="MV">MV</option>
+                            <option value="おまかせ">おまかせ</option>
+                            <option value="🦐">🦐</option>
+                            <option value="ロスエン">ロスエン</option>
+                        </select>
+                        <p class="text-center my-1 text-gray-500 text-sm">または</p>
+                        <input type="text" id="loopTypeCustom" placeholder="曲名手入力" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <div class="mb-4 input-group">
+                        <label for="slotsInput" class="block text-sm font-medium text-gray-700 mb-1">@ 募集人数</label>
+                        <input type="number" id="slotsInput" placeholder="例: 3" min="1" max="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <div class="mb-4 input-group">
+                        <label for="roomNumberInput" class="block text-sm font-medium text-gray-700 mb-1">🔑 部屋番号</label>
+                        <input type="number" id="roomNumberInput" placeholder="5桁の数字" class="w-full 
+px-3 py-2 border border-gray-300 rounded-lg text-lg font-mono text-center tracking-widest focus:ring-indigo-500 focus:border-indigo-500" maxlength="5">
+                    </div>
+
+                    <h3 class="text-base font-medium text-gray-800 mt-4 mb-2 border-t pt-2">募集要項設定</h3>
+                    
+                    <div class="mb-4 
+input-group p-3 bg-gray-50 rounded-lg">
+                        <label for="myScoreInput" class="block text-sm font-medium text-gray-700 mb-2">主: 自分の状態</label>
+                        <div class="score-radio-group mb-2">
+                            <input type="radio" id="myType_percent" name="myScoreType" value="percent" class="hidden" checked>
+                            <label for="myType_percent">%</label>
+                            <input type="radio" id="myType_star4" name="myScoreType" value="☆4" class="hidden">
+                            <label for="myType_star4">☆4</label>
+                            <input type="radio" id="myType_star4score" name="myScoreType" value="☆4スコアアップ" class="hidden">
+                            <label for="myType_star4score">☆4スコアアップ</label>
+                        </div>
+                        <input type="number" id="myScoreInput" placeholder="例: 210" 
+class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 mt-1" min="0">
+                    </div>
+
+                    <div class="mb-4 input-group p-3 bg-gray-50 rounded-lg">
+                         <label for="reqScoreInput" class="block text-sm font-medium text-gray-700 mb-2">募: 募集する条件</label>
+                        <div class="score-radio-group mb-2">
+                            <input type="radio" id="reqType_percent" name="reqScoreType" value="percent" class="hidden" checked>
+                            <label for="reqType_percent">%</label>
+                            <input type="radio" id="reqType_star4" name="reqScoreType" value="☆4" class="hidden">
+                            <label for="reqType_star4">☆4</label>
+                            <input type="radio" id="reqType_star4score" name="reqScoreType" value="☆4スコアアップ" class="hidden">
+                            <label for="reqType_star4score">☆4スコアアップ</label>
+                        </div>
+                        <div class="flex mt-1">
+                            <input type="number" id="reqScoreInput" placeholder="例: 200" class="w-1/2 px-3 py-2 border border-gray-300 rounded-l-lg focus:ring-indigo-500 focus:border-indigo-500">
+                            <select id="reqScoreCondition" class="w-1/2 px-3 py-2 border border-l-0 border-gray-300 rounded-r-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                                <option value="↑" selected>↑ (以上)</option>
+                                <option value="〜">〜 (範囲)</option>
+                                <option value="">(なし)</option>
+                            </select>
+                        </div>
+                    </div>
+
+<div class="mb-4 input-group p-3 bg-blue-50 rounded-lg border border-blue-200">
+    <h3 class="text-base font-medium text-blue-800 mb-2">任意: 支援・アンコール情報</h3>
+
+    <div class="flex items-center space-x-4 mb-2">
+        <div class="flex items-center">
+            <input type="checkbox" id="supportCheck" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+            <label for="supportCheck" class="ml-2 text-sm text-gray-700">支援います</label>
+        </div>
+        <div class="flex items-center">
+            <input 
+type="checkbox" id="encoreCheck" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+            <label for="encoreCheck" class="ml-2 text-sm text-gray-700">アンコいます</label>
+        </div>
+    </div>
+    
+    <label for="supportScoreInput" class="block text-sm font-medium text-gray-700 mb-1">支援 実効値 (任意)<br><span class="text-xs text-red-500">（自動で【%】が語尾に付きます）</span></label>
+    <div class="relative mb-2">
+        <input type="number" id="supportScoreInput" placeholder="例: 275" maxlength="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 pr-10" min="0">
+        <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">%</span>
+    </div>
+
+    <label for="freeTextInpue" class="block text-sm font-medium text-gray-700 mb-1">アンコ総合力/自由テキスト (任意)</label>
+    <input type="text" id="freeTextInpue" placeholder="例: 36.4万 または コメント" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+</div>
+            
+                    <h3 class="text-base font-medium text-gray-800 mt-4 mb-2 border-t pt-2">部屋ルール(複数選択可)</h3>
+          
+                    <div id="ruleCheckboxes" class="space-y-2 
+bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="rule_sf" value="SFなし" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+                            <label for="rule_sf" class="ml-2 text-sm text-gray-700">SFなし</label>
+                        </div>
+
+<div class="flex items-center">
+    <input type="checkbox" id="rule_hikeshi" value="火消し×" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+    <label for="rule_hikeshi" class="ml-2 text-sm text-gray-700">火消し×</label> 
+</div>
+
+<div class="flex items-center">
+                            <input type="checkbox" id="rule_miss" value="ミス気にしません" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+                            <label for="rule_miss" class="ml-2 text-sm text-gray-700">ミス気にしません</label>
+                       </div>
+
+<div class="flex items-center">
+                            <input type="checkbox" id="rule_time" value="長時間歓迎" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+                            <label for="rule_time" class="ml-2 text-sm text-gray-700">長時間歓迎</label>
+                          </div>
+
+<div class="flex items-center">
+                        <input type="checkbox" id="rule_nanido" value="難易度自由" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+                            <label for="rule_nanido" class="ml-2 text-sm 
+text-gray-700">難易度自由</label>
+                          </div>
+
+<div class="flex items-center">
+                            <input type="checkbox" id="rule_masterng" value="アンコ目的以外での紫禁止" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+                            <label for="rule_masterng" class="ml-2 text-sm text-gray-700">アンコ目的以外での紫禁止</label>
+                        </div>
+
+<div class="flex items-center">
+                            <input type="checkbox" id="rule_exng" value="アンコ目的以外での赤以上禁止" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+                            <label for="rule_exng" class="ml-2 text-sm text-gray-700">アンコ目的以外での赤以上禁止</label>
+                        </div>
+                  
+                      <div class="flex items-center">
+                            <input type="checkbox" id="rule_taisitsung" value="途中退室NG" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+                            <label for="rule_taisitsung" class="ml-2 text-sm text-gray-700">途中退室OK</label>
+                        </div>
+<div class="flex items-center">
+                            <input type="checkbox" id="rule_taisitsuok" value="途中退室OK" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+                            <label for="rule_taisitsuok" class="ml-2 text-sm text-gray-700">途中退室NG</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" 
+id="rule_non_efficiency" value="効率曲以外選曲可" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+                          <label for="rule_non_efficiency" class="ml-2 text-sm text-gray-700">効率曲以外選曲可</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="rule_mv" value="MV来たら観ます" 
+                                 class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+                            <label for="rule_mv" class="ml-2 text-sm text-gray-700">MV来たら観ます</label>
+                        </div>
+
+<div class="flex items-center">
+                            <input type="checkbox" id="rule_otsusaki" value="主のおつさきで解散" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+                            <label for="rule_otsusaki" class="ml-2 text-sm text-gray-700">主のおつさきで解散</label>
+                        </div>
+
+<div class="flex items-center">
+                            <input type="checkbox" id="rule_stamp" value="スタンプ他部屋と同じ" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+                            <label for="rule_stamp" class="ml-2 text-sm text-gray-700">スタンプ他部屋と同じ</label>
+                        </div>
+
+<div class="flex items-center">
+                            <input type="checkbox" id="rule_kaisan" value="条件違い解散" 
+                            class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+                            <label for="rule_kaisan" class="ml-2 text-sm text-gray-700">条件違い解散</label>
+                        </div>
+                    
+                        <div class="flex items-center">
+                            <input type="checkbox" id="rule_soku" value="最後までできる方" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+                            <label for="rule_soku" class="ml-2 text-sm text-gray-700">最後までできる方</label>
+                        </div>
+
+                        <div class="flex items-center">
+                            <input type="checkbox" id="rule_wait" value="集まるまで待てる方" class="form-checkbox h-4 w-4 text-indigo-600 rounded">
+                            <label for="rule_wait" class="ml-2 text-sm text-gray-700">集まるまで待てる方</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 p-6 border-4 border-green-400 rounded-xl bg-green-50 shadow-2xl">
+                    <h2 class="text-2xl font-bold text-green-700 mb-3">②生成結果 (投稿文)</h2>
+            
+                    <textarea id="outputTextarea" rows="6" readonly placeholder="上記のパラメータを入力するとここに最終的なツイート文章が表示されます。"
+                    class="w-full p-4 border-2 border-green-300 rounded-lg bg-white resize-none text-base font-medium text-gray-800"></textarea>
+                
+                    <p id="charCount" class="text-right text-lg font-extrabold text-gray-600 mb-3">0 / 140 文字</p>
+
+                    <button id="copyButton" disabled class="w-full px-6 py-4 text-xl text-white font-bold rounded-xl btn-primary transition-all cursor-not-allowed">
+                        生成した文章をコピー (140字以内)
+                    </button>
+
+                    <a id="tweetButton" href="#" 
+target="_blank" rel="noopener noreferrer" class="block w-full text-center px-6 py-4 text-xl text-white font-bold rounded-xl transition-all mt-3" style="background-color: #1DA1F2;">
+                        Xで投稿する
+                    </a>
+                </div>
+                
+                <div class="mt-8 pt-4 border-t text-sm text-gray-500 hidden">
+                    <pre id="templateViewer" class="p-3 bg-gray-100 rounded text-xs whitespace-pre-wrap mb-4 border border-gray-300">開発者向け: 現在の固定構造</pre>
+                    <p>このツールは、テンプレート構造を固定化し、入力パラメータに基づいてツイート文を生成します。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
