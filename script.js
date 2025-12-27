@@ -414,3 +414,31 @@ window.onload = () => {
     initializePlaceholderList();
     updateOutput();
 };
+/* ==========================================
+   隠しアクセスカウンター
+   ========================================== */
+document.addEventListener('DOMContentLoaded', () => {
+    const NAMESPACE = 'prsk_x_voenkyo_count_v1'; 
+    const KEY = 'visits';
+
+    // カウントアップAPIを叩く
+    fetch(`https://api.countapi.xyz/hit/${NAMESPACE}/${KEY}`)
+        .then(response => response.json())
+        .then(data => {
+            const count = data.value;
+
+            // 1. 検証ツールのElementsタブ確認用
+            const hiddenDiv = document.getElementById('access-counter-storage');
+            if (hiddenDiv) {
+                hiddenDiv.setAttribute('data-count', count);
+                hiddenDiv.innerText = `Access: ${count}`;
+            }
+
+            // 2. コンソールログに出力（F12キー -> Consoleタブ確認用）
+            // 開発者ツールを開くと見える
+            console.log(`%c現在のアクセス数: ${count}`, "color: #ff007f; font-weight: bold; font-size: 14px;");
+        })
+        .catch(error => {
+            console.error('Counter Error:', error);
+        });
+});
