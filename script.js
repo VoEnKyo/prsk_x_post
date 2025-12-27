@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ==========================================
        1. アクセスカウンター機能
        ========================================== */
-    // ★重要★ ここを自分だけのユニークなID（英数字）に書き換えてください！
     const NAMESPACE = 'prsk_x_count_voenkyo_id_v2'; 
     const KEY = 'visits';
 
@@ -75,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const loopVal = loopTypeCustom ? loopTypeCustom : loopTypeSelect;
         
         if (loopVal) {
-            text += `【${loopVal}周回】\n`;
+            text += `${loopVal}周回\n`;
         }
 
         // 2. 回数 or 時間
@@ -94,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 4. 部屋番号
         const roomNum = document.getElementById('roomNumberInput').value;
-        if (roomNum) text += `【${roomNum}】\n`;
+        if (roomNum) text += `🔑${roomNum}\n`;
 
         text += "\n"; // 空行
 
