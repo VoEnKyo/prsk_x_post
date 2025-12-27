@@ -82,10 +82,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const countType = document.querySelector('input[name="countType"]:checked').value;
         if (countType === 'count') {
             const val = document.getElementById('countInput').value;
-            if(val) headerParts.push(`あと${val}回`);
+            if(val) headerParts.push(`${val}回`);
         } else {
             const val = document.getElementById('timeInput').value;
-            if(val) headerParts.push(`${val}まで`);
+            if(val) headerParts.push(`${val}`);
         }
 
         // 3. 募集人数
