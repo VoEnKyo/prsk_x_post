@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (slots) headerParts.push(`@${slots}`);
 
         // 1行目を結合 (スペース区切り) + 改行
-        let text = headerParts.join(" ") + "\n";
+        let text = headerParts.join(" ") + "\n\n";
 
 
         // 4. 部屋番号
