@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // メインのテキスト生成関数
     function generateText() {
-        let text = "プロセカ募集\n";
+        let text = "プライベート\n";
 
         // 1. 周回種類
         const loopTypeSelect = document.getElementById('loopTypeSelect').value;
