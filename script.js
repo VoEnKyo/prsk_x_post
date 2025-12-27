@@ -66,7 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // メインのテキスト生成関数
     function generateText() {
-        let text = "プライベート\n";
+        // --- 1行目の作成 (スペース区切り) ---
+        let headerParts = ["プライベート"];
 
         // 1. 周回種類
         const loopTypeSelect = document.getElementById('loopTypeSelect').value;
@@ -74,22 +75,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const loopVal = loopTypeCustom ? loopTypeCustom : loopTypeSelect;
         
         if (loopVal) {
-            text += `${loopVal}周回\n`;
+            headerParts.push(`${loopVal}周回`);
         }
 
         // 2. 回数 or 時間
         const countType = document.querySelector('input[name="countType"]:checked').value;
         if (countType === 'count') {
             const val = document.getElementById('countInput').value;
-            if(val) text += `あと${val}回\n`;
+            if(val) headerParts.push(`あと${val}回`);
         } else {
             const val = document.getElementById('timeInput').value;
-            if(val) text += `${val}まで\n`;
+            if(val) headerParts.push(`${val}まで`);
         }
 
         // 3. 募集人数
         const slots = document.getElementById('slotsInput').value;
-        if (slots) text += `@${slots}\n`;
+        if (slots) headerParts.push(`@${slots}`);
+
+        // 1行目を結合 (スペース区切り) + 改行
+        let text = headerParts.join(" ") + "\n";
+
 
         // 4. 部屋番号
         const roomNum = document.getElementById('roomNumberInput').value;
@@ -101,8 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const myScoreVal = document.getElementById('myScoreInput').value;
         if (myScoreVal) {
             const myType = document.querySelector('input[name="myScoreType"]:checked').nextElementSibling.innerText.trim();
-            // ラジオボタンのラベルテキストを取得しています (%, ☆4, etc)
-            // もしラベルに余計な文字がある場合は .innerText を調整してください
             text += `主：${myScoreVal}${myType}\n`;
         }
 
@@ -114,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let condText = "";
             if (condition === "↑") condText = "以上";
-            else if (condition === "〜") condText = ""; // 文脈によるがここでは空
+            else if (condition === "〜") condText = ""; 
             
             text += `募：${reqScoreVal}${reqType}${condText}\n`;
         }
@@ -123,24 +126,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const supportCheck = document.getElementById('supportCheck').checked;
         const encoreCheck = document.getElementById('encoreCheck').checked;
         const supportScore = document.getElementById('supportScoreInput').value;
-        const freeText = document.getElementById('freeTextInpue').value; // IDのスペル注意(Inpue)
+        const freeText = document.getElementById('freeTextInpue').value;
 
         let supportLine = "";
-        if (supportCheck) supportLine += "支援○ ";
-        if (encoreCheck) supportLine += "アンコ○ ";
-        if (supportScore) supportLine += `支援${supportScore}% `;
+        if (supportCheck) supportLine += "支援います ";
+        if (encoreCheck) supportLine += "アンコいます ";
+        if (supportScore) supportLine += `${supportScore}% `;
         if (freeText) supportLine += `${freeText}`;
         
         if (supportLine) text += `(${supportLine.trim()})\n`;
 
-        // 8. ルール (チェックボックス)
+        // 8. ルール (2つごとに改行)
         const rules = [];
         document.querySelectorAll('#ruleCheckboxes input[type="checkbox"]:checked').forEach(cb => {
             rules.push(cb.value);
         });
 
         if (rules.length > 0) {
-            text += `\n条件：${rules.join('、')}`;
+            text += `\n条件：`; 
+            
+            // 2つずつペアにして処理
+            let ruleLines = [];
+            for (let i = 0; i < rules.length; i += 2) {
+                // i番目から2個取り出す
+                const chunk = rules.slice(i, i + 2);
+                // "、" でつなぐ
+                ruleLines.push(chunk.join("、"));
+            }
+            // 各行を改行でつなぐ
+            text += ruleLines.join("\n");
         }
 
         // テキストエリアに反映
